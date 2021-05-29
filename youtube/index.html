@@ -1,0 +1,16 @@
+<div class="container">
+    <h2>YouTube Captioning Service</h2>
+    {% for field, errors in form.errors.items() %}
+    {{ ', '.join(errors) }}
+    {% endfor %}
+    <form class="form-horizontal" method="POST" action="">
+        {{ form.csrf_token() }}
+        <div class="form-group">
+            {{ form.yturl.label }}
+            {{ form.yturl(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.submit(class="btn btn-primary")}}
+        </div>
+    </form>
+</div>
