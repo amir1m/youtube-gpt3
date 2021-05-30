@@ -1,16 +1,53 @@
-<div class="container">
-    <h2>YouTube Captioning Service</h2>
-    {% for field, errors in form.errors.items() %}
-    {{ ', '.join(errors) }}
-    {% endfor %}
-    <form class="form-horizontal" method="POST" action="">
-        {{ form.csrf_token() }}
-        <div class="form-group">
-            {{ form.yturl.label }}
-            {{ form.yturl(class="form-control") }}
-        </div>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary")}}
-        </div>
-    </form>
-</div>
+<!DOCTYPE html>
+	<html>
+		<head>
+			<title>YouTube Video Summary Service with OpenAI</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<script src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+		</head>
+
+		<div class="container">
+		    <h2>YouTube Captioning Service</h2>
+		    {% for field, errors in form.errors.items() %}
+		    {{ ', '.join(errors) }}
+		    {% endfor %}
+		    <form class="form-horizontal" method="POST" action="summarize">
+		        {{ form.csrf_token() }}
+		        <div class="form-group">
+		            {{ form.yturl.label }}
+		            {{ form.yturl(class="form-control") }}
+		        </div>
+		        <div class="form-group">
+		            {{ form.submit(class="btn btn-primary")}}
+		        </div>
+		    </form>
+
+		</div>
+		<body>
+		<div>
+			<script>
+		    $(document).ready(function() {
+		        $('form').submit(function (e) {
+		            var url = "summarize"; // send the form data here.
+		            $.ajax({
+		                type: "POST",
+		                url: url,
+		                data: $('form').serialize(), // serializes the form's elements.
+		                success: function (data) {
+		                    console.log(data)  // display the returned data in the console.
+		                }
+		            });
+		            e.preventDefault(); // block the traditional submission of the form.
+		        });
+		        // Inject our CSRF token into our AJAX request.
+		        $.ajaxSetup({
+		            beforeSend: function(xhr, settings) {
+		                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+		                    xhr.setRequestHeader("X-CSRFToken", "{{ form.csrf_token._value() }}")
+		                }
+		            }
+		        })
+		    });
+		</script>
+	</div>
+	</html>
